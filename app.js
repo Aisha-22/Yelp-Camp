@@ -1,10 +1,19 @@
 const express = require("express");
 const app = express();
+const bodyParser = require("body-parser");
 
 
 let port = 3000;
 
+app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
+
+var campgrounds = [
+    {name: "My Dream iPhone", image: "https://pixabay.com/get/57e1d3404e53a514f6da8c7dda793f7f1636dfe2564c704c72287bd3904ec351_340.jpg"},
+    {name: "Granite Hill", image: "https://pixabay.com/get/55e4d5454b51ab14f6da8c7dda793f7f1636dfe2564c704c72287bd3904ec351_340.jpg"},
+    {name: "Mountain Goat's Rest", image: "https://pixabay.com/get/57e6d7454e53ae14f6da8c7dda793f7f1636dfe2564c704c72287bd3904ec351_340.jpg"},
+    
+];
 
 app.get("/", function(req, res) {
     res.render("landing");
@@ -12,15 +21,26 @@ app.get("/", function(req, res) {
 });
 
 app.get("/campgrounds", function(req, res){
-     let campgrounds = [
-         {name: "My Dream iPhone", image: "https://media.takealot.com/covers_tsins/59156825/59156825-1-full.jpeg"},
-         {name: "Granite Hill", image: "https://media.takealot.com/covers_tsins/62670851/62670851-1-full.jpg"},
-         {name: "Mountain Goat's Rest", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/2018_Audi_A1_S_Line_30_TFSi_S-A_1.0.jpg/800px-2018_Audi_A1_S_Line_30_TFSi_S-A_1.0.jpg"}
-     ];
+  
 
      res.render("campgrounds", {campgrounds: campgrounds});
 });
 
+app.post("/campgrounds", function(req, res){
+    // res.send("YOU HIT THE POSTROUTE!")
+    // We are gping to type and enter a camp name from a form and add it to the array
+    let name = req.body.nameTextbox;
+    let image = req.body.imageTextbox;
+    let newCampground = {name: name, image: image}
+    campgrounds.push(newCampground);
+
+    //navigate to the campgrounds page
+    res.redirect("/campgrounds");
+});
+
+app.get("/campgrounds/new", function(req,res){
+    res.render("new.ejs");
+});
 
 app.listen(port, function() {
     console.log("Aisha's Servers Ready");
